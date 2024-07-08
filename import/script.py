@@ -86,6 +86,8 @@ cur.execute("""
 
 #script.py só deve importar os dados
 #SQLALCAMY deve ser responsável por criar as tabelas
+#verificar para tentar importar com lambda e tentar fazer via crescente
+
 
 print("Testando a criação e iteração sobre o banco")
 
