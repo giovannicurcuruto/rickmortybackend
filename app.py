@@ -1,30 +1,15 @@
-from flask import Flask, make_response, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from config import Config
-from sqlalchemy.orm import DeclarativeBase
+from flask import Flask
+from src.routes.character_routes import character_bp
+from configs.database import init_db
 
-class Base(DeclarativeBase):
-    pass
+def create_app():
+    app = Flask(__name__)
+    init_db(app)
+    app.register_blueprint(character_bp, url_prefix="/character")
+    
+    return app
 
-db = SQLAlchemy(model_class=Base)
+app = create_app()
 
-
-app = Flask(__name__)
-app.config['JSON_SORT_KEYS'] = False
-##Item necessário para o Flask saber como fará a conexão através do SQL-Alchemy
-app.config.from_object(Config)
-
-@app.route('/find', methods=['GET'])
-def get_all_characters():
-    cur.execute('SELECT * from character')
-    result_db = cur.fetchall()
-
-    conn.commit()
-    return make_response(
-        jsonify(
-            message = 'List all Characters',
-            data = result_db
-        )
-    )
-
-app.run()
+if __name__ == "__main__":
+    app.run(debug=True)
