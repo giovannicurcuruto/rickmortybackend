@@ -12,7 +12,7 @@ class Episode(db.Model):
     characters = db.Column(db.JSON)
 
     # Relacionamento entre Character_Episode
-    characters = db.relationship('CharacterEpisode', backref='episode', lazy=True)
+    #characters = db.relationship('character_episodes', backref='episode', lazy=True)
 
 ## "Characters" json será utilizado dentro de outro Model
 #CREATE TABLE "episodes" (

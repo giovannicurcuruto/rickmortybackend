@@ -16,11 +16,10 @@ class Character(db.Model):
     image = db.Column(db.String(100), nullable=False)
     url = db.Column(db.String(100), nullable=False)
     created = db.Column(db.String(100), nullable=False)
-    episode_id = db.Column(db.Integer, db.ForeignKey("episodes.id"))
     
+    episodes = db.relationship('Episode',secondary='character_episodes')
     # Relacionamento entre Character_Episode
-    episodes = db.relationship('CharacterEpisode', backref='character', lazy=True)
-
+    
 #
 # CREATE TABLE "character" (
 # "id" bigint,
