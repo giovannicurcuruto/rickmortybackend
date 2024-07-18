@@ -1,5 +1,10 @@
 from flask_marshmallow import Marshmallow
-import app
 
-ma = Marshmallow(app)
+
+ma = Marshmallow()
+
+def init_ma(app):
+    ma.init_app(app)    
+
+
 

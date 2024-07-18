@@ -1,8 +1,7 @@
 from flask import Blueprint
-from src.models.episodes_model import Episode
 from src.models.character_model import Character
 
-from src.Schema.schemas import CharacterModel
+from src.schema.schemas import CharacterModelSchema
 
 character_bp = Blueprint("character_bp",__name__)
 
@@ -10,8 +9,8 @@ character_bp = Blueprint("character_bp",__name__)
 def hellworld():
     print("Hello World")
 
-@character_bp.route("/allc",methods=['GET'])
+@character_bp.route("/character",methods=['GET'])
 def get_characters():
     allcharacters = Character.query.all()
-    allcharacters_schema = CharacterModel(many=True)
+    allcharacters_schema = CharacterModelSchema(many=True)
     return allcharacters_schema.jsonify(allcharacters)

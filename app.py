@@ -9,7 +9,6 @@ def create_app():
     init_ma(app)
     app.register_blueprint(character_bp, url_prefix="/character")
     
-    
     return app
 
 app = create_app()

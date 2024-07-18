@@ -5,35 +5,18 @@ class Character(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(100), nullable=False)
-    species = db.Column(db.String(100), nullable=False)
-    type = db.Column(db.String(100), nullable=False)
-    gender = db.Column(db.String(100), nullable=False)
-    origin_name = db.Column(db.String(100), nullable=False)
-    origin_url = db.Column(db.String(100), nullable=False)
-    location_name = db.Column(db.String(100), nullable=False)
-    location_url = db.Column(db.String(100), nullable=False)
-    image = db.Column(db.String(100), nullable=False)
-    url = db.Column(db.String(100), nullable=False)
-    created = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(100), nullable=True)
+    species = db.Column(db.String(100), nullable=True)
+    type = db.Column(db.String(100), nullable=True)
+    gender = db.Column(db.String(100), nullable=True)
+    origin_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)
+    present_location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)
+    image = db.Column(db.String(100), nullable=True)
     
-    episodes = db.relationship('Episode',secondary='character_episodes')
     # Relacionamento entre Character_Episode
-    
-#
-# CREATE TABLE "character" (
-# "id" bigint,
-#  "name" String(100),
-#  "status" String(100),
-#  "species" String(100),
-#  "type" String(100),
-#  "gender" String(100),
-#  "origin.name" String(100),
-#  "origin.url" String(100),
-#  "location.name" String(100),
-#  "location.url" String(100),
-#  "image" String(100),
-#  "episode" json,
-#  "url" String(100),
-#  "created" String(100)
-#);
+    episodes = db.relationship('episode',secondary='character_episodes',back_populates="character", uselist=True, lazy=True)
+
+    # Relacionamento entre Character e Location
+    origin_location = db.relationship('locations', foreign_keys=[origin_id], backref='origin_locations', uselist=False, lazy=True)   
+    present_location_location = db.relationship('locations', foreign_keys=[present_location_id], backref='present_location_locations',uselist=False, lazy=True)
+

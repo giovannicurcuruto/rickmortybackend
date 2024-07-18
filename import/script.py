@@ -1,5 +1,6 @@
 import psycopg2
-from flask_marshmallow import Marshmallow
+import json
+from operator import itemgetter
 
 hostname = 'localhost'
 database = 'rmorty'
@@ -18,82 +19,71 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 with open("import/allCharsUpdated.json", encoding='utf-8') as file:
-    data = json.load(file)
+    chars_data_unsorted = json.load(file)
 
-print(data)
+with open("import/allEpisodesUpdated.json", encoding='utf-8') as file:
+    episodes_data_unsorted = json.load(file)
 
-# #criando as tabelas no banco
-# cur.execute("""
-#         CREATE TABLE IF NOT EXISTS "character" (
-#         "id" bigint,
-#         "name" text,
-#         "status" text,
-#         "species" text,
-#         "type" text,
-#         "gender" text,
-#         "origin.name" text,
-#         "origin.url" text,
-#         "location.name" text,
-#         "location.url" text,
-#         "image" text,
-#         "url" text,
-#         "created" text
-#         );
+with open("import/allLocations.json", encoding='utf-8') as file:
+    locations_data_unsorted = json.load(file)
 
-#         CREATE TABLE IF NOT EXISTS "episodes" (
-#         "id" bigint,
-#         "name" text,
-#         "air_date" text,
-#         "episode" text,
-#         "url" text,
-#         "created" text
-#         );
+chars_data_sorted = sorted(chars_data_unsorted, key=itemgetter("id"))
+episodes_data_sorted = sorted(episodes_data_unsorted, key=itemgetter("id"))
+locations_data_sorted = sorted(locations_data_unsorted, key=itemgetter("id"))
 
-#         CREATE TABLE IF NOT EXISTS "locations" (
-#         "id" bigint,
-#         "name" text,
-#         "type" text,
-#         "dimension" text,
-#         "url" text,
-#         "created" text
-#         );
-# """)
-# conn.commit()
+#print(episodes_data_sorted[3])
 
-# cur.execute("""
-#             INSERT INTO "character" ("id","name","status","species","type","gender","origin.name","origin.url","location.name","location.url","image","url","created")
-#             VALUES
-#             (2,
-#             'Morty Smith',
-#             'Alive',
-#             'Human',
-#             '',
-#             'Male',
-#             'unknown',
-#             '',
-#             'Citadel of Ricks',
-#             'https://rickandmortyapi.com/api/location/3',
-#             'https://rickandmortyapi.com/api/character/avatar/2.jpeg',
-#             'https://rickandmortyapi.com/api/character/2',
-#             '2017-11-04T18:50:21.651Z');
+print(locations_data_sorted[2]["name"])
 
-#             INSERT INTO "episodes" ("id","name","air_date","episode","url","created")
-#             VALUES
-#             (1,'Pilot','December 2, 2013','S01E01','https://rickandmortyapi.com/api/episode/1','2017-11-10T12:56:33.798Z');
-
-#             INSERT INTO "locations" ("id","name","type","dimension","url","created")
-#             VALUES
-#             (1,'Earth (C-137)','Planet','Dimension C-137','https://rickandmortyapi.com/api/location/1','2017-11-10T12:42:04.162Z');
-            
-            
-            
-#             """)
+for x in locations_data_sorted:
+    cur.execute('''
+                INSERT INTO location ("name","type","dimension")
+                VALUES (%s,%s,%s)''', 
+                (
+                    x["name"], x["type"], x["dimension"]
+                ))
+    
+for x in episodes_data_sorted:
+    cur.execute('''
+                INSERT INTO episode ("name","air_date","episode")
+                VALUES (%s,%s,%s)''', 
+                (
+                    x["name"], x["air_date"], x["episode"]
+                )) 
 
 
-# #script.py só deve importar os dados
-# #SQLALCAMY deve ser responsável por criar as tabelas
-# #verificar para tentar importar com lambda e tentar fazer via crescente
+                 
+for x in chars_data_sorted:
+    cur.execute('''
+                INSERT INTO character ("name","status","type","gender", "image")
+                VALUES (%s,%s,%s,%s,%s)''', 
+                (
+                    x["name"], x["status"], x["type"], x["gender"], x["image"]
+                ))
 
 
-print("Testando a criação e iteração sobre o banco")
+
+
+episode_character_dicionary = {character['id']: character['episode'] for character in chars_data_sorted}
+
+episode_character_dicionary_onlynumbers = {
+    character_id: [int(episode.split('/')[-1]) for episode in episodes]
+    for character_id, episodes in episode_character_dicionary.items()
+}
+
+print(episode_character_dicionary[100])
+
+for character_id, episode_ids in episode_character_dicionary.items():
+    for episode_id in episode_ids:
+        cur.execute('''
+                    INSERT INTO character_episodes ("character_id", "episode_id")
+                    VALUES (%s, %s)''', 
+                    (character_id, episode_id))
+
+
+print("######################Testando a criação e iteração sobre o banco")
+
+# created, url - descartar em todas as tabelas
+# db.create_all() -> gerar a tabela novamente
+# origin e location, apontar na tabela location
 
