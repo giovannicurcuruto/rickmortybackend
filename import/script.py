@@ -33,55 +33,84 @@ locations_data_sorted = sorted(locations_data_unsorted, key=itemgetter("id"))
 
 #print(episodes_data_sorted[3])
 
-print(locations_data_sorted[2]["name"])
+#print(locations_data_sorted[2]["name"])
 
 for x in locations_data_sorted:
     cur.execute('''
                 INSERT INTO location ("name","type","dimension")
                 VALUES (%s,%s,%s)''', 
                 (
-                    x["name"], x["type"], x["dimension"]
+                    x["name"], 
+                    x["type"], 
+                    x["dimension"]
                 ))
     
+conn.commit()   
 for x in episodes_data_sorted:
     cur.execute('''
                 INSERT INTO episode ("name","air_date","episode")
                 VALUES (%s,%s,%s)''', 
                 (
-                    x["name"], x["air_date"], x["episode"]
+                    x["name"],
+                    x["air_date"],
+                    x["episode"]
                 )) 
+conn.commit()
 
+def to_int_or_none(value):
+    try:
+        return int(value) if value and value.strip() else None
+    except (ValueError, TypeError):
+        return None
 
                  
 for x in chars_data_sorted:
+    #print(type(int(x["location"]["url"].split("/")[-1])))
+    #print(x["origin"]["url"].split("/")[-1])
+    location_id = to_int_or_none(x["location"]["url"].split("/")[-1])
+    origin_id = to_int_or_none(x["origin"]["url"].split("/")[-1])
+
     cur.execute('''
-                INSERT INTO character ("name","status","type","gender", "image")
-                VALUES (%s,%s,%s,%s,%s)''', 
-                (
-                    x["name"], x["status"], x["type"], x["gender"], x["image"]
+                INSERT INTO character ("name","status","type","gender", "image", "present_location_id", "origin_id")
+                VALUES (%s,%s,%s,%s,%s,%s,%s)''', 
+                (                    
+                    x["name"], 
+                    x["status"], 
+                    x["type"], 
+                    x["gender"], 
+                    x["image"], 
+                    location_id, 
+                    origin_id
+                ))
+
+conn.commit()
+#print(chars_data_sorted[1]["episode"][1].split("/")[-1])
+#print("#")
+#print(episodes_data_sorted[1]["characters"][1].split("/")[-1])
+
+
+#print(chars_data_sorted[0]["episode"])
+
+for characters_id in chars_data_sorted:
+    #print(characters_id["id"])
+    id = characters_id["id"]
+    for episodes_id in characters_id["episode"]:
+        episode = episodes_id.split("/")[-1]
+        #print(f"{id} : {episode}")
+        cur.execute('''
+                 INSERT INTO character_episodes ("character_id","episode_id")
+                 VALUES (%s,%s)''', 
+                (                    
+                    id, episode
                 ))
 
 
 
-
-episode_character_dicionary = {character['id']: character['episode'] for character in chars_data_sorted}
-
-episode_character_dicionary_onlynumbers = {
-    character_id: [int(episode.split('/')[-1]) for episode in episodes]
-    for character_id, episodes in episode_character_dicionary.items()
-}
-
-print(episode_character_dicionary[100])
-
-for character_id, episode_ids in episode_character_dicionary.items():
-    for episode_id in episode_ids:
-        cur.execute('''
-                    INSERT INTO character_episodes ("character_id", "episode_id")
-                    VALUES (%s, %s)''', 
-                    (character_id, episode_id))
-
+conn.commit()
 
 print("######################Testando a criação e iteração sobre o banco")
+cur.close()
+conn.close()
 
 # created, url - descartar em todas as tabelas
 # db.create_all() -> gerar a tabela novamente
