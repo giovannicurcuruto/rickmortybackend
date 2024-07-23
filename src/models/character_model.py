@@ -14,9 +14,9 @@ class Character(db.Model):
     image = db.Column(db.String(100), nullable=True)
     
     # Relacionamento entre Character_Episode
-    episodes = db.relationship('episode',secondary='character_episodes',back_populates="character", uselist=True, lazy=True)
+    episodes = db.relationship('Episode',secondary='character_episodes',back_populates="characters", uselist=True, lazy=True)
 
     # Relacionamento entre Character e Location
-    origin_location = db.relationship('location', foreign_keys=[origin_id], backref='origin_locations', uselist=False, lazy=True)   
-    present_location_location = db.relationship('location', foreign_keys=[present_location_id], backref='present_location_locations',uselist=False, lazy=True)
+    origin_location = db.relationship('Location', foreign_keys=[origin_id], back_populates='origin_character', uselist=False, lazy=True)   
+    present_location_location = db.relationship('Location', foreign_keys=[present_location_id], back_populates='present_location_character', uselist=False, lazy=True)
 

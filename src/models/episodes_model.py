@@ -9,5 +9,5 @@ class Episode(db.Model):
     episode = db.Column(db.String(100), nullable=False)
 
     # Relacionamento entre Character_Episode
-    characters = db.relationship('character', secondary='character_episodes', back_populates="episode", uselist=True, lazy=True)
+    characters = db.relationship('Character', secondary='character_episodes', back_populates="episodes", uselist=True, lazy=True)
 

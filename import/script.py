@@ -31,10 +31,6 @@ chars_data_sorted = sorted(chars_data_unsorted, key=itemgetter("id"))
 episodes_data_sorted = sorted(episodes_data_unsorted, key=itemgetter("id"))
 locations_data_sorted = sorted(locations_data_unsorted, key=itemgetter("id"))
 
-#print(episodes_data_sorted[3])
-
-#print(locations_data_sorted[2]["name"])
-
 for x in locations_data_sorted:
     cur.execute('''
                 INSERT INTO location ("name","type","dimension")
@@ -82,37 +78,30 @@ for x in chars_data_sorted:
                     location_id, 
                     origin_id
                 ))
-
-conn.commit()
-#print(chars_data_sorted[1]["episode"][1].split("/")[-1])
-#print("#")
-#print(episodes_data_sorted[1]["characters"][1].split("/")[-1])
-
-
-#print(chars_data_sorted[0]["episode"])
-
-for characters_id in chars_data_sorted:
-    #print(characters_id["id"])
-    id = characters_id["id"]
-    for episodes_id in characters_id["episode"]:
+    id = x["id"]
+    for episodes_id in x["episode"]:
         episode = episodes_id.split("/")[-1]
-        #print(f"{id} : {episode}")
+        
         cur.execute('''
                  INSERT INTO character_episodes ("character_id","episode_id")
                  VALUES (%s,%s)''', 
                 (                    
                     id, episode
                 ))
+    
+
 
 
 
 conn.commit()
 
+
+#for characters_id in chars_data_sorted:
+    
+
+#conn.commit()
+
 print("######################Testando a criação e iteração sobre o banco")
 cur.close()
 conn.close()
-
-# created, url - descartar em todas as tabelas
-# db.create_all() -> gerar a tabela novamente
-# origin e location, apontar na tabela location
 

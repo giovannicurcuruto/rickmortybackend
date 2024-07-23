@@ -3,3 +3,4 @@ import/allLocations.json
 import/allEpisodesUpdated.json
 __pycache__
 venv
+.vscode

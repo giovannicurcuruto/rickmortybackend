@@ -1,17 +1,17 @@
 from configs.schema_config import ma
 
-class CharacterModelSchema(ma.Schema):
+class GetAllCharactersSchema(ma.Schema):
     id = ma.Integer()
     name = ma.String()
     status = ma.String()
     species = ma.String()
-    type = ma.String()
-    gender = ma.String()
-    origin_id = ma.String()
-    present_location_id = ma.String()
     image = ma.String()
 
-    
+class CharacterModelSchema(GetAllCharactersSchema):
+    type = ma.String()
+    gender = ma.String()
+    origin_location = ma.Nested("LocationModelSchema")
+    present_location_location = ma.Nested("LocationModelSchema")
 
 class EpisodeModelSchema(ma.Schema):
     id = ma.Integer()
@@ -19,5 +19,12 @@ class EpisodeModelSchema(ma.Schema):
     air_date = ma.String()
     episode = ma.String()
 
+class LocationModelSchema(ma.Schema):
+    id = ma.Integer()
+    name = ma.String()
 
+
+
+#Schema do GetALL
+#Schema menor e páginação     
 

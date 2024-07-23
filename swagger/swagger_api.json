@@ -1,0 +1,103 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample server.",
+    "version": "1.0.0",
+    "title": "Swagger Sample App"
+  },
+  "host": "localhost:5000",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "Character",
+      "description": "Character operations"
+    }
+  ],
+  "paths": {
+    "/character": {
+      "get": {
+        "tags": ["Character"],
+        "summary": "Get all characters",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "A list of characters",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Character"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/find/{id}": {
+      "get": {
+        "tags": ["Character"],
+        "summary": "Get a character by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "The ID of the character to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A character",
+            "schema": {
+              "$ref": "#/definitions/Character"
+            }
+          },
+          "404": {
+            "description": "Character not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Character": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "species": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "origin_id": {
+          "type": "integer"
+        },
+        "origin_name": {
+          "type": "string"
+        },
+        "present_location id": {
+          "type": "integer"
+        },
+        "present_location name": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
