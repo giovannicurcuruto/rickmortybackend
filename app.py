@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from src.routes.character_routes import character_bp
 from configs.database import init_db
 from configs.schema_config import init_ma
@@ -20,6 +21,7 @@ def init_swagger(app):
 def create_app():
     app = Flask(__name__)
     app.config['JSON_SORT_KEYS'] = True
+    CORS(app)
     init_db(app)
     init_ma(app)
     init_swagger(app)
